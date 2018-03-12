@@ -38,16 +38,26 @@ def event_thread(events):
             if event.time < time.clock():
                 pass
 
-                
 
 class Event:
 
-    def __init__(self, params):
+    def __init__(self, params, cfg):
         self.periodic = params.get('periodic')
         self.time = params.get('time')
         self.container = params.get('c_name')
         self.type = params.get('type')
+        self.ip = cfg.get('master_ip')
         
+    def send_host_request(self, num, volatile):
+        url = "http://{}:8080/jobRequest?token=None&type=new_job".format(self.ip) 
+        req_data = {"c_name" : self.container, "num" : num, "volatile" : volatile}
+        resp = requests.post(url, data=req_data)
+        return resp.status_code
+        
+    def send_stream_request(self):
+        
+
+
 
 class Simulator:
     
@@ -57,7 +67,7 @@ class Simulator:
         self.system_output = {}
         
         self.sim_config = read_cfg_json()
-        self.create_events(sim_config.get('events'))
+        self.create_events(self.sim_config.get('events'))
         
         # init data collection thread
         self.data_col_thread = threading.Thread(target=data_collector, args=self.system_output)
@@ -69,7 +79,7 @@ class Simulator:
 
     def create_events(self, cfg_events):
         for item in cfg_events:
-            events.append(Event(item))
+            self.events.append(Event(item, self.sim_config))
         
     def start_sim(self):
         self.data_col_thread.start()
