@@ -1,0 +1,5 @@
+.vscode
+*__pycache*
+*.log
+*output.json
+*.pyc
