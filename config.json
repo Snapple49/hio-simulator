@@ -1,4 +1,38 @@
 {
-    "c_name" : "snapple49/hio-daemondev:test",
-    "master_ip" : "130.238.28.48"
+    "master_ip" : "130.238.28.48",
+    "master_port" : 8080,
+    "duration" : 120,
+       
+    "events" : [
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-daemondev:test",
+            "num_req" : 100,
+            "periodic" : false,
+            "time" : 50
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-daemondev:test",
+            "num_req" : 10,
+            "periodic" : true,
+            "time" : 10,
+            "frequency" : 20
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-daemondev:test",
+            "num_req" : 5,
+            "periodic" : true,
+            "time" : 30,
+            "frequency" : 50
+        },
+        {
+            "type" : "host_req",
+            "c_name" : "snapple49/hio-daemondev:test",
+            "num" : 4,
+            "volatile" : false,
+            "time" : 5
+        }
+    ]
 }
