@@ -2,6 +2,7 @@
     "master_ip" : "130.238.28.48",
     "master_port" : 8080,
     "duration" : 120,
+    "polling_interval" : 5,
        
     "events" : [
         {

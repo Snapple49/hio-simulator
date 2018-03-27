@@ -32,10 +32,10 @@ def data_collector(dict_storage, logger, cfg):
     url = "http://{}:{}/messagesQuery?token=None&command=verbose".format(cfg.get('master_ip'), cfg.get('master_port'))
     start = int(time.time())
     while start + cfg.get('duration') > int(time.time()):
-        time.sleep(5)
+        time.sleep(cfg.get('polling_interval'))
         resp = requests.get(url)
         if resp.status_code == 200:
-            dict_storage[int(time.time())] = resp.text
+            dict_storage[int(time.time()) - start] = resp.text
             logger.log_event("Got data from master!")
 
 
@@ -180,6 +180,11 @@ class Simulator:
         self.logger.log_event("Simulation finished, time elapsed: {} seconds".format(int(time.time()) - starting_time))
         with open("{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
             json.dump(self.system_output, output)
-        
 
+def run_simulation():
+    sim = Simulator()
+    sim.start_sim()
+
+if __name__ == "__main__":
+    run_simulation()    
 
