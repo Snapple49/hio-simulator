@@ -64,7 +64,7 @@ def event_manager(events, duration):
                 events.remove(event)
 
 def periodic_thread(event):
-    print("Started a periodic event! I am thread {} and I am streaming every {} seconds".format(threading.current_thread().ident))
+    print("Started a periodic event! I am thread {} and I am streaming every {} seconds".format(threading.current_thread().ident, event.frequency))
     start = int(time.time())
     while start + event.lifetime > int(time.clock):
         print("Sending a stream request!")
