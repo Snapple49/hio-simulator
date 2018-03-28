@@ -9,7 +9,7 @@
             "type" : "host_req",
             "c_name" : "snapple49/hio-daemondev:test",
             "num" : 4,
-            "volatile" : false,
+            "volatile" : true,
             "time" : 5
         }
     ]

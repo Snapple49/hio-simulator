@@ -78,7 +78,7 @@ class Event:
         self.start_time = params.get('time')
         self.container = params.get('c_name')
         self.volatile = params.get('volatile')
-        self.num = params.get('num_req')
+        self.num = params.get('num')
         self.frequency = params.get('frequency')
 
         self.ip = cfg.get('master_ip')
