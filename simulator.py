@@ -88,7 +88,7 @@ class Event:
         
     def send_host_request(self):
         url = "http://{}:{}/jobRequest?token=None&type=new_job".format(self.ip, self.port) 
-        req_data = {"c_name" : self.container, "num" : self.num, "volatile" : self.volatile}
+        req_data = json.dumps({"c_name" : self.container, "num" : self.num, "volatile" : self.volatile})
         resp = requests.post(url, data=req_data)
         return resp.status_code
 
@@ -104,7 +104,7 @@ class Event:
         return func_data
 
     def send_stream_request(self):
-        sc = stream_connector.StreamConnector(self.ip, self.port , token="None", std_idle_time=1)
+        sc = stream_connector.StreamConnector(self.ip, self.port , token="None", std_idle_time=1, source_name="demo_program")
 
         for _ in range(self.num):
             if sc.is_master_alive():
