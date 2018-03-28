@@ -119,13 +119,13 @@ class Logger:
         self.logname = "{}_simulator_log".format(self.timestamp)
         self.starttime = time.time()
         self.i = 1
-        while self.logname in os.listdir():
+        while self.logname in os.listdir('.'):
             self.logname += "({})".format(self.i)
             self.i+=1
             
         self.logname += ".log"
 
-        logfile = open(self.logname, 'x')
+        logfile = open(self.logname, 'a')
         logfile.close()
 
     def log_event(self, message):
