@@ -4,7 +4,7 @@ from harmonicIO.general.services import SysOut
 # Example program
 # The use case number can be defined by varying the number in use case variable
 MASTER_DATA = {
-    "MASTER_ADDR": "192.168.1.5",
+    "MASTER_ADDR": "192.168.1.17",
     "MASTER_PORT": 8080
 }
 
