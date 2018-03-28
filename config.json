@@ -6,6 +6,14 @@
        
     "events" : [
         {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-daemondev:test",
+            "num_req" : 1,
+            "periodic" : true,
+            "time" : 20,
+            "frequency" : 5
+        },
+        {
             "type" : "host_req",
             "c_name" : "snapple49/hio-daemondev:test",
             "num" : 4,
