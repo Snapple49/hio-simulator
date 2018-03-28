@@ -28,7 +28,7 @@ def data_collector(dict_storage, logger, cfg):
     Every 5 seconds, send a request to master and get the available metadata,
     pair it with the current time in seconds and add the pair to provided dict
     """
-    print("Started collecting master data! I am thread " + threading.current_thread().ident)
+    print("Started collecting master data! I am thread " + threading.current_thread().getName())
     url = "http://{}:{}/messagesQuery?token=None&command=verbose".format(cfg.get('master_ip'), cfg.get('master_port'))
     start = int(time.time())
     while start + cfg.get('duration') > int(time.time()):
@@ -40,7 +40,7 @@ def data_collector(dict_storage, logger, cfg):
 
 
 def event_manager(events, duration):
-    print("Started event manager! I am thread " + threading.current_thread().ident)
+    print("Started event manager! I am thread " + threading.current_thread().getName())
     start = int(time.time())
     while duration > int(time.time()) - start:
         for event in list(events):
@@ -56,7 +56,7 @@ def event_manager(events, duration):
                         print("Sending a stream request!")
                         event.send_stream_request()
                     else:
-                        periodic_event_thread = threading.Thread(target=periodic_thread, args=(event))
+                        periodic_event_thread = threading.Thread(target=periodic_thread, args=(event,))
                         periodic_event_thread.start()
 
                 # event has been handled, remove from list
@@ -64,9 +64,9 @@ def event_manager(events, duration):
                 events.remove(event)
 
 def periodic_thread(event):
-    print("Started a periodic event! I am thread {} and I am streaming every {} seconds".format(threading.current_thread().ident, event.frequency))
+    print("Started a periodic event! I am thread {} and I am streaming every {} seconds".format(threading.current_thread().getName(), event.frequency))
     start = int(time.time())
-    while start + event.lifetime > int(time.clock):
+    while start + event.lifetime > int(time.time()):
         print("Sending a stream request!")
         event.send_stream_request()
         time.sleep(event.frequency)
