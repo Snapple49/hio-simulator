@@ -35,7 +35,7 @@ def data_collector(dict_storage, logger, cfg):
         time.sleep(cfg.get('polling_interval'))
         resp = requests.get(url)
         if resp.status_code == 200:
-            dict_storage[int(time.time()) - start] = resp.text
+            dict_storage[int(time.time()) - start] = json.loads(resp.text)
             logger.log_event("Got data from master!")
 
 
