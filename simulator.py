@@ -29,7 +29,7 @@ def data_collector(dict_storage, logger, cfg):
     pair it with the current time in seconds and add the pair to provided dict
     """
     print("Started collecting master data! I am thread " + threading.current_thread().getName())
-    url = "http://{}:{}/messagesQuery?token=None&command=verbose".format(cfg.get('master_ip'), cfg.get('master_port'))
+    url = "http://{}:{}/messagesQuery?token=None&command=verbose&format=JSON".format(cfg.get('master_ip'), cfg.get('master_port'))
     start = int(time.time())
     while start + cfg.get('duration') > int(time.time()):
         time.sleep(cfg.get('polling_interval'))
