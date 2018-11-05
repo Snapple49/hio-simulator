@@ -23,18 +23,14 @@ class CTuple:
     RT = 3
 
 
-class JobStatus:
-    INIT = "INITIALIZING"
-    READY = "READY"
-    ACTIVE = "ACTIVE"
-    IDLE = "IDLE"
-    FAILED = "FAILED"
-
-
 class Definition(object):
     @staticmethod
     def get_str_node_name():
         return "node_name"
+
+    @staticmethod
+    def get_str_size_desc():
+        return "avg_cpu"
 
     @staticmethod
     def get_str_node_role():
@@ -185,8 +181,8 @@ class Definition(object):
             return "messagesQuery"
 
         @staticmethod
-        def get_str_job_mgr():
-            return "jobRequest"
+        def get_str_cont_mgr():
+            return "containerRequest"
 
         @staticmethod
         def get_str_reg_func():
@@ -256,6 +252,10 @@ class Definition(object):
         @staticmethod
         def get_str_data_digest():
             return "digest"
+
+        @staticmethod
+        def get_str_cpu_share():
+            return "cpu_share"
 
         class Status(object):
 
