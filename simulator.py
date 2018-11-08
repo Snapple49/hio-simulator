@@ -89,7 +89,7 @@ class Event:
         self.lifetime = cfg.get('duration') - self.start_time
         
     def send_host_request(self):
-        url = "http://{}:{}/jobRequest?token=None&type=new_job".format(self.ip, self.port) 
+        url = "http://{}:{}/containerRequest?token=None&type=new_container".format(self.ip, self.port) 
         req_data = json.dumps({"c_name" : self.container, "num" : self.num, "volatile" : self.volatile})
         resp = requests.post(url, data=req_data)
         return resp.status_code
