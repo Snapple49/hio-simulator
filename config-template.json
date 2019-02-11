@@ -1,0 +1,24 @@
+{
+    "master_ip" : "",
+    "master_port" : 8080,
+    "duration" : 30,
+    "polling_interval" : 5,
+    "events" :
+    [
+        {
+            "type" : "stream_req",
+            "c_name" : "STR container image eg. snapple49/hio-tester:cpu_X_time_Y_",
+            "num" : "INT number of requests to send",
+            "periodic" : "BOOLEAN periodic if event should be reoccurring ",
+            "time" : "INT starting time of event",
+            "frequency" : "INT frequency of periodic events"
+        },
+        {
+            "type" : "host_req",
+            "c_name" : "STR container image eg. snapple49/hio-tester:cpu_X_time_Y_",
+            "num" : "INT number of PE's to start",
+            "volatile" : "BOOLEAN whether host request is volatile",
+            "time" : "INT starting time of event"
+        }
+    ]
+}
