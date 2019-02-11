@@ -5,14 +5,14 @@ import time
 import os
 from harmonicIO.stream_connector import stream_connector
 from sys import exit
+from random import randrange
 
 
 class EventType:
     HOST = "host_req"
     STREAM = "stream_req"
 
-def read_cfg_json():
-    path = "./config.json"
+def read_cfg_json(path="./config.json"):
     with open(path, 'r') as cfg:
         try:
             ret = json.load(cfg)
@@ -39,7 +39,7 @@ def data_collector(dict_storage, logger, cfg):
             logger.log_event("Got data from master!")
 
 
-def event_manager(events, duration):
+def event_manager(events, duration, random_offset):
     print("Started event manager! I am thread " + threading.current_thread().getName())
     start = int(time.time())
     while duration > int(time.time()) - start:
@@ -56,20 +56,20 @@ def event_manager(events, duration):
                         print("Sending a stream request!")
                         event.send_stream_request()
                     else:
-                        periodic_event_thread = threading.Thread(target=periodic_thread, args=(event,))
+                        periodic_event_thread = threading.Thread(target=periodic_thread, args=(event, random_offset))
                         periodic_event_thread.start()
 
                 # event has been handled, remove from list
                 event.logger.log_event("Event processed: --- {} | {} | {} | {} ---".format(event.container, event.start_time, event.periodic, event.type))
                 events.remove(event)
 
-def periodic_thread(event):
+def periodic_thread(event, random_offset):
     print("Started a periodic event! I am thread {} and I am streaming every {} seconds".format(threading.current_thread().getName(), event.frequency))
     start = int(time.time())
     while start + event.lifetime > int(time.time()):
         print("Sending a stream request!")
         event.send_stream_request()
-        time.sleep(event.frequency)
+        time.sleep(event.frequency + max(event.frequency, randrange(-random_offset, random_offset)))
 
 
 
@@ -143,21 +143,22 @@ class Logger:
 
 class Simulator:
 
-    def __init__(self):
+    def __init__(self, config_file):
         self.events = []
         self.system_output = {}
         self.logger = Logger()
 
-        self.sim_config = read_cfg_json()
+        self.sim_config = read_cfg_json(config_file)
         self.create_events(self.sim_config.get('events'))
         self.duration = self.sim_config.get('duration')
+        self.random_offset = self.sim_config.get('random_offset', 0)
 
         # init data collection thread
         self.data_col_thread = threading.Thread(target=data_collector, args=(self.system_output, self.logger, self.sim_config))
         self.data_col_thread.daemon = True
 
         # init event thread
-        self.event_thread = threading.Thread(target=event_manager, args=(self.events, self.duration))
+        self.event_thread = threading.Thread(target=event_manager, args=(self.events, self.duration, self.random_offset))
         self.event_thread.daemon = True
 
     def create_events(self, cfg_events):
@@ -186,10 +187,16 @@ class Simulator:
         with open("{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
             json.dump(self.system_output, output)
 
-def run_simulation():
-    sim = Simulator()
+def run_simulation(config_file):
+    sim = Simulator(config_file)
     sim.start_sim()
 
+import argparse
+
 if __name__ == "__main__":
-    run_simulation()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-s", "--scenario_config", help="configuration json for scenario", required=True)
+
+    args = parser.parse_args()
+    run_simulation(args.scenario_config)
 
