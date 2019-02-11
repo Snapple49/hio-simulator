@@ -1,47 +1,36 @@
 {
-    "master_ip" : "130.238.28.48",
+    "master_ip" : "192.168.1.11",
     "master_port" : 8080,
-    "duration" : 180,
+    "duration" : 60,
     "polling_interval" : 5,
-       
     "events" : [
         {
-            "type" : "stream_req",
-            "c_name" : "snapple49/hio-daemondev:test",
-            "num" : 5,
-            "periodic" : true,
-            "time" : 20,
-            "frequency" : 5
-        },
-        {
-            "type" : "stream_req",
-            "c_name" : "snapple49/hio-daemondev:test",
-            "num" : 20,
-            "periodic" : true,
-            "time" : 30,
-            "frequency" : 10
-        },
-        {
-            "type" : "stream_req",
-            "c_name" : "snapple49/hio-daemondev:test",
-            "num" : 100,
-            "periodic" : false,
-            "time" : 60,
-            "frequency" : 0
-        },
-        {
             "type" : "host_req",
-            "c_name" : "snapple49/hio-daemondev:test",
-            "num" : 4,
+            "c_name" : "snapple49/hio-tester:cpu20time60",
+            "num" : 1,
             "volatile" : true,
             "time" : 5
         },
         {
             "type" : "host_req",
-            "c_name" : "snapple49/hio-daemondev:test",
-            "num" : 8,
+            "c_name" : "snapple49/hio-tester:cpu50time60",
+            "num" : 1,
             "volatile" : true,
-            "time" : 70
+            "time" : 7
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu20time60",
+            "num" : 20,
+            "periodic" : false,
+            "time" : 15
+        },
+        {
+            "type" : "host_req",
+            "c_name" : "snapple49/hio-tester:cpu20time60",
+            "num" : 2,
+            "volatile" : true,
+            "time" : 5
         }
     ]
 }

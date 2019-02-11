@@ -4,12 +4,12 @@ import json
 import time
 import os
 from harmonicIO.stream_connector import stream_connector
-            
+from sys import exit
+
 
 class EventType:
     HOST = "host_req"
     STREAM = "stream_req"
-
 
 def read_cfg_json():
     path = "./config.json"
@@ -44,12 +44,12 @@ def event_manager(events, duration):
     start = int(time.time())
     while duration > int(time.time()) - start:
         for event in list(events):
-            if event.start_time > int(time.time()) - start:
+            if event.start_time < int(time.time()) - start:
                 # if it's a host request, just send request
                 if event.type == EventType.HOST:
                     print("Sending a host request!")
                     event.send_host_request()
-                
+
                 # if stream request, do it once if not periodic else start periodic thread
                 elif event.type == EventType.STREAM:
                     if not event.periodic:
@@ -75,7 +75,10 @@ def periodic_thread(event):
 
 class Event:
     def __init__(self, params, cfg, logger):
-        self.type = params.get('type')
+        if params.get('type') in [EventType.HOST, EventType.STREAM]:
+            self.type = params.get('type')
+        else:
+            exit("Event configuration invalid:\n{}".format(params))
         self.periodic = params.get('periodic')
         self.start_time = params.get('time')
         self.container = params.get('c_name')
@@ -87,9 +90,9 @@ class Event:
         self.port = cfg.get('master_port')
         self.logger = logger
         self.lifetime = cfg.get('duration') - self.start_time
-        
+
     def send_host_request(self):
-        url = "http://{}:{}/containerRequest?token=None&type=new_container".format(self.ip, self.port) 
+        url = "http://{}:{}/containerRequest?token=None&type=new_container".format(self.ip, self.port)
         req_data = json.dumps({"c_name" : self.container, "num" : self.num, "volatile" : self.volatile})
         resp = requests.post(url, data=req_data)
         return resp.status_code
@@ -124,7 +127,7 @@ class Logger:
         while self.logname in os.listdir('.'):
             self.logname += "({})".format(self.i)
             self.i+=1
-            
+
         self.logname += ".log"
 
         logfile = open(self.logname, 'a')
@@ -144,15 +147,15 @@ class Simulator:
         self.events = []
         self.system_output = {}
         self.logger = Logger()
-        
+
         self.sim_config = read_cfg_json()
         self.create_events(self.sim_config.get('events'))
         self.duration = self.sim_config.get('duration')
-        
+
         # init data collection thread
         self.data_col_thread = threading.Thread(target=data_collector, args=(self.system_output, self.logger, self.sim_config))
         self.data_col_thread.daemon = True
-    
+
         # init event thread
         self.event_thread = threading.Thread(target=event_manager, args=(self.events, self.duration))
         self.event_thread.daemon = True
@@ -160,7 +163,7 @@ class Simulator:
     def create_events(self, cfg_events):
         for item in cfg_events:
             self.events.append(Event(item, self.sim_config, self.logger))
-        
+
     def start_sim(self):
         # read events from file
         print("Created events!")
@@ -177,7 +180,7 @@ class Simulator:
         # wait on threads to finish
         self.data_col_thread.join()
         self.event_thread.join()
-        
+
         # write output of master verbose to json file
         self.logger.log_event("Simulation finished, time elapsed: {} seconds".format(int(time.time()) - starting_time))
         with open("{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
@@ -188,5 +191,5 @@ def run_simulation():
     sim.start_sim()
 
 if __name__ == "__main__":
-    run_simulation()    
+    run_simulation()
 
