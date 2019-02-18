@@ -130,12 +130,12 @@ class Logger:
 
         self.logname += ".log"
 
-        logfile = open(self.logname, 'a')
+        logfile = open("./output/logs/" + self.logname, 'a')
         logfile.close()
 
     def log_event(self, message):
         try:
-            logfile = open(self.logname, 'a')
+            logfile = open("./output/logs/" + self.logname, 'a')
             logfile.write(time.strftime("%H:%M:%S - ", time.localtime()) + " --- " + message + '\n')
             logfile.close()
         except:
@@ -184,8 +184,17 @@ class Simulator:
 
         # write output of master verbose to json file
         self.logger.log_event("Simulation finished, time elapsed: {} seconds".format(int(time.time()) - starting_time))
-        with open("{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
+        with open("./output/data/{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
             json.dump(self.system_output, output)
+
+        # get parameter configs
+        print("Getting configs...")
+        url = "http://{}:{}/messagesQuery?token=None&command=get_config".format(self.sim_config.get('master_ip'), self.sim_config.get('master_port'))
+        resp = requests.get(url)
+        config_data = json.loads(resp.text)
+        with open("./output/data/{}_config_setup.json".format(self.logger.timestamp), 'w') as cfg_file:
+            json.dump(config_data, cfg_file)
+
 
 def run_simulation(config_file):
     sim = Simulator(config_file)
@@ -196,6 +205,8 @@ import argparse
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("-s", "--scenario_config", help="configuration json for scenario", required=True)
+    os.makedirs("./output/data", exist_ok=True)
+    os.makedirs("./output/logs", exist_ok=True)
 
     args = parser.parse_args()
     run_simulation(args.scenario_config)

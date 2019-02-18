@@ -1,36 +1,36 @@
 {
-    "master_ip" : "192.168.1.11",
+    "master_ip" : "192.168.1.20",
     "master_port" : 8080,
-    "duration" : 60,
+    "duration" : 5,
     "polling_interval" : 5,
     "events" : [
         {
             "type" : "host_req",
-            "c_name" : "snapple49/hio-tester:cpu20time60",
+            "c_name" : "snapple49/hio-tester:cpu20time30",
             "num" : 1,
             "volatile" : true,
-            "time" : 5
+            "time" : 20
         },
         {
             "type" : "host_req",
-            "c_name" : "snapple49/hio-tester:cpu50time60",
+            "c_name" : "snapple49/hio-tester:cpu50time30",
             "num" : 1,
             "volatile" : true,
-            "time" : 7
+            "time" : 20
         },
         {
             "type" : "stream_req",
-            "c_name" : "snapple49/hio-tester:cpu20time60",
-            "num" : 20,
+            "c_name" : "snapple49/hio-tester:cpu20time30",
+            "num" : 3,
             "periodic" : false,
             "time" : 15
         },
         {
-            "type" : "host_req",
-            "c_name" : "snapple49/hio-tester:cpu20time60",
-            "num" : 2,
-            "volatile" : true,
-            "time" : 5
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu50time30",
+            "num" : 3,
+            "periodic" : false,
+            "time" : 18
         }
     ]
 }
