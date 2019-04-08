@@ -185,7 +185,7 @@ class Simulator:
         # write output of master verbose to json file
         self.logger.log_event("Simulation finished, time elapsed: {} seconds".format(int(time.time()) - starting_time))
         with open("./output/data/{}_simulator_output.json".format(self.logger.timestamp) , 'w') as output:
-            json.dump(self.system_output, output)
+            json.dump(self.system_output, output, indent=2, sort_keys=True)
 
         # get parameter configs
         print("Getting configs...")
@@ -193,7 +193,7 @@ class Simulator:
         resp = requests.get(url)
         config_data = json.loads(resp.text)
         with open("./output/data/{}_config_setup.json".format(self.logger.timestamp), 'w') as cfg_file:
-            json.dump(config_data, cfg_file)
+            json.dump(config_data, cfg_file, indent=2, sort_keys=True)
 
 
 def run_simulation(config_file):
