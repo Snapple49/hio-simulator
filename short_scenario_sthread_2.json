@@ -1,0 +1,48 @@
+{
+    "master_ip" : "130.238.29.13",
+    "master_port" : 8080,
+    "duration" : 1800,
+    "polling_interval" : 5,
+    "random_offset" : 10,
+    "events" :
+    [
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu100time10",
+            "num" : 20,
+            "periodic" : true,
+            "time" : 10,
+            "frequency" : 60
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu100time30",
+            "num" : 20,
+            "periodic" : true,
+            "time" : 30,
+            "frequency" : 300
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu100time40",
+            "num" : 30,
+            "periodic" : false,
+            "time" : 600
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu100time40",
+            "num" : 40,
+            "periodic" : false,
+            "time" : 1200
+        },
+        {
+            "type" : "stream_req",
+            "c_name" : "snapple49/hio-tester:cpu100time20",
+            "num" : 20,
+            "periodic" : true,
+            "time" : 50,
+            "frequency" : 100
+        }
+    ]
+}
