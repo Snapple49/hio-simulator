@@ -1,15 +1,23 @@
 from .stream_connector import StreamConnector
 from harmonicIO.general.services import SysOut
-
+import os
+import json
+from random import shuffle
 # Example program
 # The use case number can be defined by varying the number in use case variable
 MASTER_DATA = {
-    "MASTER_ADDR": "192.168.1.5",
+    "MASTER_ADDR": "192.168.1.7",
     "MASTER_PORT": 8080
 }
 
+#"salmantoor/harmonicpe:metadata"
+#salmantoor/cellprofiler:3.1.9"
+#snapple49/cellprofiler-hio:dahlo-test
+#snapple49/cellprofiler-hio:dahlo-test2
+#salmantoor/cellp-3.1.9:latest
+#salmantoor/cellp-3.1.9-without-processes
 PROCC_DATA = {
-    "daemon_test":  "snapple49/hio-daemondev:test",
+    "IMAGE_NAME":  "salmantoor/cellprofiler-3.1.9:latest",
     "OS":    "ubuntu"
 }
 
@@ -20,33 +28,62 @@ SETTING = {
     "SOURCE_NAME": "demo_program"
 }
 
-ITEM_NUMBER = 10
+DATA_PATH = ""
 
+ITEM_NUMBER = 50
 
-def get_random_data():
-    def read_data_from_file(path):
-        func_data = bytearray()
+def meta_data(path):
 
-        with open(path, 'rb') as f:
-            lines = f.readlines()
+    directory, file_name = head, tail = os.path.split(path)
+    #file_size = os.path.getsize(path)
+    #meta_data = {'name':file_name, 'size': file_size}
+    meta_data = file_name
+    b_meta_data = json.dumps(meta_data).encode('utf-8')
 
-            for line in lines:
-                func_data += line
+    sep = ';'
 
-        return func_data
+    b_sep = json.dumps(sep).encode('utf-8')
+    meta_data = bytearray()
+    meta_data += b_meta_data
 
-    # Define data to test
-    d_list = {
-        'daemon_test': read_data_from_file('harmonicIO/stream_connector/lena512.bmp')
-    }
+    meta_data += b_sep
+    return meta_data
 
-    # Generate a sample stream order
-    stream_order = [0] * ITEM_NUMBER
-    import random
-    for i in range(ITEM_NUMBER):
-        stream_order[i] = (i, 'daemon_test' if (random.randrange(1, 100) % len(d_list)) == 0 else 'daemon_test')
+def read_data_from_file(path):
+    func_data = bytearray()
 
-    return stream_order, d_list
+    b_meta_data = meta_data(path)
+    func_data += b_meta_data
+
+    with open(path, 'rb') as f:
+        lines = f.readlines()
+
+        for line in lines:
+            func_data += line
+
+    return func_data
+
+def get_randomized_data(data_dir):
+    # Get list of data files
+    tmplist = os.listdir(data_dir)
+    # Randomize order of streaming data
+    shuffle(tmplist)
+    # Append path to each filename
+    datalist = []
+    for item in tmplist:
+        datalist.append(os.path.join(data_dir, item))
+    return datalist
+
+    # # Define data to test
+    # d_list = {
+    #     'daemon_test': read_data_from_file('/home/ubuntu/cellprofiler/006018-1-001001001.tif')
+    # }
+
+    # # Generate a sample stream order
+    # stream_order = [0] * ITEM_NUMBER
+    # for i in range(ITEM_NUMBER):
+    #     stream_order[i] = (i, 'daemon_test' if (random.randrange(1, 100) % len(d_list)) == 0 else 'daemon_test')
+
 
 if __name__ == '__main__':
 
@@ -68,17 +105,16 @@ if __name__ == '__main__':
                                                                            MASTER_DATA["MASTER_PORT"]))
 
     SysOut.debug_string("Generating random order of data in {0} series.".format(ITEM_NUMBER))
-    stream_order, d_list = get_random_data()
+    stream_order = get_randomized_data(DATA_PATH)
 
     # Stream according to the random order
-    for _, obj_type in stream_order:
+    for filename in stream_order:
 
         d_container = sc.get_data_container()
 
         # Assign data to container
-        d_container += d_list[obj_type]
+        d_container += read_data_from_file(filename)
 
-        sc.send_data(PROCC_DATA[obj_type], PROCC_DATA["OS"], d_container)
+        sc.send_data(PROCC_DATA["IMAGE_NAME"], PROCC_DATA["OS"], d_container)
 
     SysOut.out_string("Finish!")
-
